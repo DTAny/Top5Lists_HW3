@@ -121,7 +121,7 @@ getTop5ListPairs = async (req, res) => {
         }
         if (!top5Lists.length) {
             return res
-                .status(404)
+                .status(200)
                 .json({ success: false, error: 'Top 5 Lists not found'})
         }
         else {

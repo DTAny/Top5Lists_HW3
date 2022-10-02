@@ -17,7 +17,8 @@ export const GlobalStoreActionType = {
     CLOSE_CURRENT_LIST: "CLOSE_CURRENT_LIST",
     LOAD_ID_NAME_PAIRS: "LOAD_ID_NAME_PAIRS",
     SET_CURRENT_LIST: "SET_CURRENT_LIST",
-    SET_LIST_NAME_EDIT_ACTIVE: "SET_LIST_NAME_EDIT_ACTIVE"
+    SET_LIST_NAME_EDIT_ACTIVE: "SET_LIST_NAME_EDIT_ACTIVE",
+    CREATE_LIST: "CREATE_LIST"
 }
 
 // WE'LL NEED THIS TO PROCESS TRANSACTIONS
@@ -87,6 +88,16 @@ export const useGlobalStore = () => {
             }
             // START EDITING A LIST NAME
             case GlobalStoreActionType.SET_LIST_NAME_EDIT_ACTIVE: {
+                return setStore({
+                    idNamePairs: store.idNamePairs,
+                    currentList: payload,
+                    newListCounter: store.newListCounter,
+                    isListNameEditActive: true,
+                    isItemEditActive: false,
+                    listMarkedForDeletion: null
+                });
+            }
+            case GlobalStoreActionType.CREATE_LIST: {
                 return setStore({
                     idNamePairs: store.idNamePairs,
                     currentList: payload,
@@ -235,6 +246,33 @@ export const useGlobalStore = () => {
             type: GlobalStoreActionType.SET_LIST_NAME_EDIT_ACTIVE,
             payload: null
         });
+    }
+
+    store.showCreateListModal = () => {
+        document.getElementById('create-list-name-textfield').value = '';
+        document.getElementById('create-list-1-textfield').value = '';
+        document.getElementById('create-list-2-textfield').value = '';
+        document.getElementById('create-list-3-textfield').value = '';
+        document.getElementById('create-list-4-textfield').value = '';
+        document.getElementById('create-list-5-textfield').value = '';
+        let modal = document.getElementById('create-modal');
+        modal.classList.add('is-visible');
+    }
+
+    store.hideCreateListModal = () => {
+        let modal = document.getElementById('create-modal');
+        modal.classList.remove('is-visible');
+    }
+
+    store.createList = (payload) => {
+        async function asyncCreateList() {
+            let response = await api.createTop5List(payload);
+            if (response.data.success){
+                let top5List = response.data.top5List;
+                store.setCurrentList(top5List._id);
+            }
+        }
+        asyncCreateList();
     }
 
     // THIS GIVES OUR STORE AND ITS REDUCER TO ANY COMPONENT THAT NEEDS IT
