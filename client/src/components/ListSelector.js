@@ -15,7 +15,7 @@ const ListSelector = () => {
 
     useEffect(() => {
         store.loadIdNamePairs();
-    });
+    }, []);
 
     let listCard = "";
     if (store) {
